@@ -1,5 +1,5 @@
-/************** ECE2049 DEMO CODE ******************/
-/**************  13 March 2019   ******************/
+/************** ECE2049 Lab #1 *********************/
+/*************  04 September 2019  *****************/
 /***************************************************/
 
 #include <msp430.h>
@@ -46,11 +46,11 @@ void drawAliens(Alien*, int);
 void main(void)
 {
     int i;
-    int levelBottom = 85; // The lowest the top of the alien character can go before you lose the level
+    int levelBottom = 85; // The lowest the top of the alien numerical character can go before you lose the level
     unsigned char keyPressed = 0, lastKeyPressed = 0;
     unsigned long int mainCounter = 0, auxCounter = 0, auxCounter2 = 0;
     State state = WELCOME_SCREEN;
-    Alien aliens[50]; //Alien* aliens = (Alien*) malloc(50 * sizeof(Alien));
+    Alien aliens[50];
     int alienCount = 0;
     int level = 1;
 
@@ -101,6 +101,7 @@ void main(void)
 
             int currentRow = 0;
 
+            // Determine where aliens will be placed
             for (i = 0; i < alienCount; i++)
             {
                 int currentColumn = rand() % 5;
@@ -117,6 +118,7 @@ void main(void)
                 }
                 heightTracker[currentColumn] = heightTracker[currentColumn] + 1; // Can't use ++ or += because that doesn't modify the value in the array (I think)
 
+                // Assign aliens their key and space them out
                 aliens[i].x = 15 * (currentColumn + 1) + 3;
                 aliens[i].y = 10 - (20 * currentRow);
                 aliens[i].key = "01234"[currentColumn];
@@ -153,6 +155,7 @@ void main(void)
                                 break; // May as well short circuit, we only care if the level is still going on or not
                             }
                         }
+                        // Advance the level once all aliens have been destroyed
                         if (!anyVisible)
                         {
                             level++;
