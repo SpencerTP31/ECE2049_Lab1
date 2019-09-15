@@ -48,8 +48,8 @@ void main(void)
     int i;
     int levelBottom = 85; // The lowest the top of the alien character can go before you lose the level
     unsigned char keyPressed = 0, lastKeyPressed = 0;
-    unsigned long int mainCounter = 0, auxCounter = 0;
-    State state = START_LEVEL;
+    unsigned long int mainCounter = 0, auxCounter = 0, auxCounter2 = 0;
+    State state = WELCOME_SCREEN;
     Alien aliens[50]; //Alien* aliens = (Alien*) malloc(50 * sizeof(Alien));
     int alienCount = 0;
     int level = 1;
@@ -67,15 +67,18 @@ void main(void)
         {
         case WELCOME_SCREEN:
             drawWelcome();
+            BuzzerOnPitch(48);
             state = WAIT_FOR_START;
             break;
         case WAIT_FOR_START:
             if (keyPressed == '*')
             {
                 state = START_COUNT_DOWN;
+                BuzzerOff();
             }
             break;
         case START_COUNT_DOWN:
+            BuzzerOnPitch(20);
             auxCounter = mainCounter;
             state = COUNT_DOWN_SCREEN;
         case COUNT_DOWN_SCREEN:
@@ -89,6 +92,7 @@ void main(void)
             state = WAIT_FOR_START;
             break;
         case START_LEVEL:
+            BuzzerOff();
             // Create aliens based on level number (minimum of one, maximum of 50)
             alienCount = ((rand() % (level * level)) + 1) % 50;
 
@@ -135,6 +139,8 @@ void main(void)
                     {
                         // Note the direct access to the struct in the array
                         aliens[i].visible = false;
+                        BuzzerOnPitch(150 + rand() % 20);
+                        auxCounter2 = 5;
 
                         bool anyVisible;
 
@@ -175,11 +181,18 @@ void main(void)
             break;
         case LOSS_SCREEN:
             drawLoss();
+            BuzzerOn();
             state = WAIT_FOR_START;
             level = 1; // Reset the level so that you start at the beginning of the game
             break;
         }
         mainCounter++;
+        if (auxCounter2 > 0)
+        {
+            auxCounter2--;
+            if(!auxCounter2)
+                BuzzerOff();
+        }
         lastKeyPressed = keyPressed;
     }
 }
